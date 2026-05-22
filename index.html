@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나에게 맞는 텀블러는?</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #f5f0e8;
+  --card: #faf7f2;
+  --black: #1a1a1a;
+  --gray: #7a7a7a;
+  --line: #d8d0c4;
+}
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px;
+}
+.container { width: 100%; max-width: 420px; }
+
+.progress-wrap { margin-bottom: 28px; opacity: 0; transition: opacity 0.4s; }
+.progress-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.progress-label { font-weight: 300; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); }
+.progress-num { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 13px; color: var(--black); }
+.progress-bar { width: 100%; height: 1px; background: var(--line); }
+.progress-fill { height: 100%; background: var(--black); transition: width 0.6s cubic-bezier(.4,0,.2,1); }
+
+.card, .result-card, .title-card { background: var(--card); border: 1px solid var(--line); animation: fadeUp 0.5s cubic-bezier(.4,0,.2,1); }
+
+.title-top { padding: 40px 32px 32px; border-bottom: 1px solid var(--line); text-align: center; }
+.title-illust { width: 100%; max-width: 300px; margin: 0 auto 28px; display: block; }
+.title-eyebrow { font-weight: 300; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); margin-bottom: 10px; }
+.title-h1 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: var(--black); line-height: 1.25; margin-bottom: 12px; }
+.title-sub { font-weight: 300; font-size: 12px; color: var(--gray); line-height: 1.8; }
+.title-body { padding: 24px 32px; }
+.start-btn { width: 100%; padding: 16px; background: var(--black); color: var(--bg); border: none; font-family: 'Noto Sans KR', sans-serif; font-weight: 300; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; }
+.start-btn:hover { opacity: 0.75; }
+
+.card { overflow: hidden; }
+.q-illust-wrap { padding: 40px 32px 28px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; min-height: 260px; justify-content: center; position: relative; }
+.q-num { font-family: 'Playfair Display', serif; font-size: 80px; font-weight: 900; color: var(--black); line-height: 1; opacity: 0.06; position: absolute; top: 16px; left: 24px; }
+.q-svg { width: 120px; height: 140px; margin-bottom: 20px; }
+.q-text { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--black); text-align: center; line-height: 1.5; }
+.opts-wrap { padding: 0; }
+.opt-btn { width: 100%; padding: 18px 32px; background: transparent; border: none; border-bottom: 1px solid var(--line); font-family: 'Noto Sans KR', sans-serif; font-weight: 300; font-size: 13px; color: var(--black); text-align: left; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: background 0.15s; letter-spacing: 0.2px; }
+.opt-btn:last-child { border-bottom: none; }
+.opt-btn:hover { background: var(--bg); }
+.opt-arrow { font-size: 16px; color: var(--gray); transition: transform 0.2s; }
+.opt-btn:hover .opt-arrow { transform: translateX(4px); }
+
+.result-card { overflow: hidden; }
+.result-top { padding: 40px 32px 28px; border-bottom: 1px solid var(--line); text-align: center; }
+.result-svg { width: 120px; height: 150px; margin: 0 auto 24px; display: block; }
+.result-eyebrow { font-weight: 300; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); margin-bottom: 8px; }
+.result-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--black); line-height: 1.3; margin-bottom: 12px; }
+.result-desc { font-weight: 300; font-size: 12px; color: var(--gray); line-height: 1.9; }
+.result-body { padding: 0; }
+.feat-item { display: flex; align-items: center; gap: 14px; padding: 16px 32px; border-bottom: 1px solid var(--line); font-weight: 300; font-size: 12px; color: var(--black); }
+.feat-item:last-child { border-bottom: none; }
+.feat-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--black); flex-shrink: 0; }
+.restart-btn { width: 100%; padding: 18px 32px; background: var(--black); color: var(--bg); border: none; font-family: 'Noto Sans KR', sans-serif; font-weight: 300; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; display: block; }
+.restart-btn:hover { opacity: 0.75; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-top">
+      <span class="progress-label">나의 텀블러 찾기</span>
+      <span class="progress-num" id="progressNum">01 / 06</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+  <div id="quizArea"></div>
+</div>
+
+<script>
+const qSVGs = {
+  transit: `<svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 자동차 몸통 -->
+    <rect x="10" y="72" width="100" height="36" rx="6" stroke="#1a1a1a" stroke-width="1.5" fill="#e07b00"/>
+    <rect x="10" y="72" width="100" height="36" rx="6" fill="#f4a340" opacity="0.3"/>
+    <!-- 지붕 -->
+    <path d="M28 72 Q34 48 50 44 L70 44 Q86 48 92 72 Z" stroke="#1a1a1a" stroke-width="1.5" fill="#c85e00"/>
+    <path d="M28 72 Q34 48 50 44 L70 44 Q86 48 92 72 Z" fill="#e07b00" opacity="0.5"/>
+    <!-- 창문 -->
+    <path d="M33 70 Q37 52 50 48 L60 48 Q60 70 33 70 Z" stroke="#1a1a1a" stroke-width="1" fill="#b8d4f0" opacity="0.8"/>
+    <path d="M87 70 Q83 52 70 48 L60 48 Q60 70 87 70 Z" stroke="#1a1a1a" stroke-width="1" fill="#b8d4f0" opacity="0.8"/>
+    <line x1="60" y1="48" x2="60" y2="70" stroke="#1a1a1a" stroke-width="1" opacity="0.5"/>
+    <!-- 문 라인 -->
+    <line x1="60" y1="72" x2="60" y2="108" stroke="#1a1a1a" stroke-width="1" opacity="0.4"/>
+    <!-- 도어 핸들 -->
+    <rect x="52" y="88" width="6" height="2" rx="1" stroke="#1a1a1a" stroke-width="0.8" fill="#1a1a1a" opacity="0.4"/>
+    <rect x="62" y="88" width="6" height="2" rx="1" stroke="#1a1a1a" stroke-width="0.8" fill="#1a1a1a" opacity="0.4"/>
+    <!-- 바퀴 -->
+    <circle cx="30" cy="108" r="14" stroke="#1a1a1a" stroke-width="1.5" fill="#333"/>
+    <circle cx="30" cy="108" r="7" stroke="#1a1a1a" stroke-width="1" fill="#888"/>
+    <circle cx="90" cy="108" r="14" stroke="#1a1a1a" stroke-width="1.5" fill="#333"/>
+    <circle cx="90" cy="108" r="7" stroke="#1a1a1a" stroke-width="1" fill="#888"/>
+    <!-- 헤드라이트 -->
+    <rect x="10" y="80" width="10" height="6" rx="2" stroke="#1a1a1a" stroke-width="1" fill="#f4e060" opacity="0.9"/>
+    <!-- 테일라이트 -->
+    <rect x="100" y="80" width="10" height="6" rx="2" stroke="#1a1a1a" stroke-width="1" fill="#e63946" opacity="0.9"/>
+    <!-- 텀블러 옆에 작게 -->
+    <rect x="96" y="44" width="10" height="26" rx="3" stroke="#1a1a1a" stroke-width="1" fill="#3d5a99"/>
+    <rect x="98" y="41" width="6" height="4" rx="2" stroke="#1a1a1a" stroke-width="0.8" fill="#2c4a80"/>
+  </svg>`,
+  cafe: `<svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="38" y="42" width="44" height="60" rx="8" stroke="#1a1a1a" stroke-width="1.5" fill="#b8d4f0"/>
+    <rect x="38" y="42" width="44" height="60" rx="8" fill="#d4e8f8" opacity="0.5"/>
+    <rect x="43" y="36" width="34" height="8" rx="4" stroke="#1a1a1a" stroke-width="1.3" fill="#52b788"/>
+    <rect x="48" y="30" width="24" height="7" rx="3.5" stroke="#1a1a1a" stroke-width="1.2" fill="#40916c"/>
+    <rect x="39" y="100" width="42" height="5" rx="2.5" stroke="#1a1a1a" stroke-width="1.2" fill="#90b8e0"/>
+    <rect x="42" y="46" width="36" height="52" rx="5" stroke="#1a1a1a" stroke-width="0.7" fill="none"/>
+    <rect x="72" y="20" width="4" height="45" rx="2" stroke="#1a1a1a" stroke-width="1" fill="#ff8fab"/>
+    <path d="M25 80 L35 80 L33 100 L27 100 Z" stroke="#1a1a1a" stroke-width="1" fill="#e8d5b0"/>
+    <path d="M35 85 Q42 85 42 92 Q42 99 35 99" stroke="#1a1a1a" stroke-width="1" fill="none"/>
+    <ellipse cx="30" cy="80" rx="5" ry="2" stroke="#1a1a1a" stroke-width="0.8" fill="#d4c090"/>
+    <path d="M28 72 Q30 68 28 64" stroke="#1a1a1a" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+    <path d="M33 70 Q35 66 33 62" stroke="#1a1a1a" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+  </svg>`,
+  dorm: `<svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="15" y="35" width="34" height="70" rx="5" stroke="#1a1a1a" stroke-width="1.3" fill="#e8e0d0"/>
+    <rect x="20" y="42" width="24" height="18" rx="3" stroke="#1a1a1a" stroke-width="1" fill="#c8d8e8"/>
+    <circle cx="27" cy="75" r="4" stroke="#1a1a1a" stroke-width="1" fill="#ff8080"/>
+    <circle cx="37" cy="75" r="4" stroke="#1a1a1a" stroke-width="1" fill="#80c8ff"/>
+    <rect x="22" y="86" width="20" height="5" rx="2.5" stroke="#1a1a1a" stroke-width="0.8" fill="#c8c0b0"/>
+    <rect x="68" y="48" width="36" height="56" rx="8" stroke="#1a1a1a" stroke-width="1.5" fill="#2d6a4f"/>
+    <rect x="68" y="48" width="36" height="56" rx="8" fill="#52b788" opacity="0.35"/>
+    <rect x="73" y="42" width="26" height="7" rx="3.5" stroke="#1a1a1a" stroke-width="1.2" fill="#1b4332"/>
+    <rect x="77" y="37" width="18" height="6" rx="3" stroke="#1a1a1a" stroke-width="1" fill="#1b4332"/>
+    <rect x="69" y="103" width="34" height="5" rx="2.5" stroke="#1a1a1a" stroke-width="1.2" fill="#1b4332"/>
+    <line x1="91" y1="62" x2="97" y2="62" stroke="white" stroke-width="0.8" opacity="0.5"/>
+    <line x1="91" y1="70" x2="97" y2="70" stroke="white" stroke-width="0.8" opacity="0.5"/>
+    <line x1="91" y1="78" x2="97" y2="78" stroke="white" stroke-width="0.8" opacity="0.5"/>
+    <path d="M52 75 L66 75" stroke="#1a1a1a" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,2"/>
+    <path d="M63 72 L66 75 L63 78" stroke="#1a1a1a" stroke-width="1" stroke-linecap="round" fill="none"/>
+  </svg>`,
+  desk: `<svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="18" y="60" width="72" height="45" rx="4" stroke="#1a1a1a" stroke-width="1.3" fill="#e0dcd4"/>
+    <rect x="22" y="64" width="64" height="37" rx="2" stroke="#1a1a1a" stroke-width="0.8" fill="#c8d8e8"/>
+    <rect x="12" y="104" width="84" height="5" rx="2" stroke="#1a1a1a" stroke-width="1" fill="#ccc8c0"/>
+    <rect x="22" y="40" width="18" height="24" rx="2" stroke="#1a1a1a" stroke-width="1" fill="#d4c090"/>
+    <line x1="22" y1="44" x2="40" y2="44" stroke="#1a1a1a" stroke-width="0.6" opacity="0.4"/>
+    <rect x="82" y="44" width="22" height="62" rx="6" stroke="#1a1a1a" stroke-width="1.5" fill="#c0c0c0"/>
+    <rect x="82" y="44" width="22" height="62" rx="6" fill="#e0e0e0" opacity="0.5"/>
+    <rect x="85" y="39" width="16" height="6" rx="3" stroke="#1a1a1a" stroke-width="1.2" fill="#a0a0a0"/>
+    <rect x="87" y="35" width="12" height="5" rx="2.5" stroke="#1a1a1a" stroke-width="1" fill="#888"/>
+    <rect x="83" y="105" width="20" height="4" rx="2" stroke="#1a1a1a" stroke-width="1" fill="#a0a0a0"/>
+    <ellipse cx="90" cy="60" rx="3" ry="9" stroke="white" stroke-width="0.5" fill="none" opacity="0.4"/>
+    <path d="M96 52 Q98 48 100 52 Q100 56 98 56 Q96 56 96 52Z" stroke="#1a1a1a" stroke-width="0.8" fill="#b8d4f0" opacity="0.6"/>
+    <line x1="95.5" y1="50" x2="100.5" y2="57" stroke="#1a1a1a" stroke-width="1" opacity="0.7"/>
+  </svg>`,
+  strong: `<svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 유리컵 -->
+    <path d="M32 38 L28 118 L92 118 L88 38 Z" stroke="#1a1a1a" stroke-width="1.5" fill="#b8d4f0" opacity="0.35"/>
+    <path d="M32 38 L28 118 L92 118 L88 38 Z" stroke="#1a1a1a" stroke-width="1.5" fill="none"/>
+    <!-- 음료 채워진 부분 -->
+    <path d="M34 55 L30 118 L90 118 L86 55 Z" fill="#f4d03f" opacity="0.45"/>
+    <line x1="34" y1="55" x2="86" y2="55" stroke="#1a1a1a" stroke-width="0.8" opacity="0.3"/>
+    <!-- 유리 광택 -->
+    <path d="M36 42 L33 110" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.35"/>
+    <!-- 얼음 조각들 -->
+    <rect x="44" y="60" width="14" height="14" rx="3" stroke="#1a1a1a" stroke-width="1" fill="white" opacity="0.7" transform="rotate(-10 44 60)"/>
+    <rect x="65" y="68" width="12" height="12" rx="3" stroke="#1a1a1a" stroke-width="1" fill="white" opacity="0.6" transform="rotate(8 65 68)"/>
+    <rect x="50" y="78" width="10" height="10" rx="2.5" stroke="#1a1a1a" stroke-width="0.8" fill="white" opacity="0.55" transform="rotate(-5 50 78)"/>
+    <!-- 레몬 슬라이스 -->
+    <circle cx="74" cy="62" r="13" stroke="#1a1a1a" stroke-width="1.2" fill="#f4d03f"/>
+    <circle cx="74" cy="62" r="13" fill="#f9e87a" opacity="0.4"/>
+    <circle cx="74" cy="62" r="9" stroke="#1a1a1a" stroke-width="0.6" fill="none" opacity="0.4"/>
+    <line x1="74" y1="49" x2="74" y2="75" stroke="#1a1a1a" stroke-width="0.6" opacity="0.4"/>
+    <line x1="61" y1="62" x2="87" y2="62" stroke="#1a1a1a" stroke-width="0.6" opacity="0.4"/>
+    <line x1="65" y1="53" x2="83" y2="71" stroke="#1a1a1a" stroke-width="0.5" opacity="0.3"/>
+    <line x1="65" y1="71" x2="83" y2="53" stroke="#1a1a1a" stroke-width="0.5" opacity="0.3"/>
+    <!-- 빨대 -->
+    <rect x="56" y="18" width="5" height="55" rx="2.5" stroke="#1a1a1a" stroke-width="1" fill="#ff8fab"/>
+    <!-- 거품 -->
+    <circle cx="42" cy="52" r="2" fill="white" opacity="0.6"/>
+    <circle cx="50" cy="50" r="1.5" fill="white" opacity="0.5"/>
+    <circle cx="58" cy="53" r="1.8" fill="white" opacity="0.5"/>
+  </svg>`,
+  wash: `<svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="45" y="70" width="30" height="45" rx="6" stroke="#1a1a1a" stroke-width="1.5" fill="#c0c0c0"/>
+    <rect x="45" y="70" width="30" height="45" rx="6" fill="#e0e0e0" opacity="0.5"/>
+    <rect x="47" y="74" width="26" height="38" rx="4" stroke="#1a1a1a" stroke-width="0.7" fill="none"/>
+    <rect x="46" y="113" width="28" height="4" rx="2" stroke="#1a1a1a" stroke-width="1" fill="#a0a0a0"/>
+    <rect x="48" y="50" width="24" height="7" rx="3.5" stroke="#1a1a1a" stroke-width="1.2" fill="#888"/>
+    <rect x="44" y="57" width="32" height="8" rx="4" stroke="#1a1a1a" stroke-width="1.3" fill="#a0a0a0"/>
+    <rect x="76" y="55" width="4" height="55" rx="2" stroke="#1a1a1a" stroke-width="1" fill="#8B4513"/>
+    <ellipse cx="78" cy="55" rx="8" ry="10" stroke="#1a1a1a" stroke-width="1" fill="#c8a882"/>
+    <line x1="70" y1="50" x2="72" y2="60" stroke="#1a1a1a" stroke-width="0.7" opacity="0.5"/>
+    <line x1="73" y1="48" x2="74" y2="58" stroke="#1a1a1a" stroke-width="0.7" opacity="0.5"/>
+    <line x1="82" y1="48" x2="81" y2="58" stroke="#1a1a1a" stroke-width="0.7" opacity="0.5"/>
+    <line x1="85" y1="50" x2="83" y2="60" stroke="#1a1a1a" stroke-width="0.7" opacity="0.5"/>
+    <path d="M25 75 Q27 70 29 75 Q29 80 27 80 Q25 80 25 75Z" stroke="#1a1a1a" stroke-width="0.8" fill="#b8d4f0" opacity="0.7"/>
+    <path d="M30 88 Q32 83 34 88 Q34 93 32 93 Q30 93 30 88Z" stroke="#1a1a1a" stroke-width="0.8" fill="#b8d4f0" opacity="0.5"/>
+    <path d="M20 92 Q22 87 24 92 Q24 97 22 97 Q20 97 20 92Z" stroke="#1a1a1a" stroke-width="0.8" fill="#b8d4f0" opacity="0.4"/>
+  </svg>`
+};
+
+const resultSVGs = {
+  slim: `<svg viewBox="0 0 120 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="42" y="18" width="36" height="10" rx="5" stroke="#1a1a1a" stroke-width="1.5" fill="#2c4a80"/>
+    <rect x="46" y="10" width="28" height="9" rx="4.5" stroke="#1a1a1a" stroke-width="1.3" fill="#1a3060"/>
+    <rect x="36" y="28" width="48" height="92" rx="12" stroke="#1a1a1a" stroke-width="1.5" fill="#3d5a99"/>
+    <rect x="36" y="28" width="48" height="92" rx="12" fill="#6b8cce" opacity="0.35"/>
+    <rect x="40" y="32" width="40" height="84" rx="8" stroke="#1a1a1a" stroke-width="0.7" fill="none"/>
+    <rect x="37" y="119" width="46" height="7" rx="3.5" stroke="#1a1a1a" stroke-width="1.3" fill="#2c4a80"/>
+    <ellipse cx="52" cy="56" rx="5" ry="16" fill="white" opacity="0.12"/>
+    <path d="M84 32 Q100 50 97 82 Q95 96 85 100" stroke="#c8a060" stroke-width="1.5" stroke-linecap="round" fill="none" stroke-dasharray="3,2"/>
+    <circle cx="84" cy="32" r="3" fill="#c8a060" stroke="#1a1a1a" stroke-width="0.8"/>
+    <circle cx="85" cy="100" r="3" fill="#c8a060" stroke="#1a1a1a" stroke-width="0.8"/>
+    <line x1="52" y1="88" x2="68" y2="88" stroke="white" stroke-width="0.7" opacity="0.3"/>
+    <line x1="55" y1="95" x2="65" y2="95" stroke="white" stroke-width="0.7" opacity="0.2"/>
+  </svg>`,
+  large: `<svg viewBox="0 0 120 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="30" y="16" width="60" height="12" rx="6" stroke="#1a1a1a" stroke-width="1.5" fill="#1b4332"/>
+    <rect x="36" y="7" width="48" height="10" rx="5" stroke="#1a1a1a" stroke-width="1.3" fill="#1b4332"/>
+    <rect x="22" y="28" width="76" height="96" rx="14" stroke="#1a1a1a" stroke-width="1.5" fill="#2d6a4f"/>
+    <rect x="22" y="28" width="76" height="96" rx="14" fill="#52b788" opacity="0.3"/>
+    <rect x="27" y="33" width="66" height="86" rx="10" stroke="#1a1a1a" stroke-width="0.7" fill="none"/>
+    <rect x="24" y="123" width="72" height="7" rx="3.5" stroke="#1a1a1a" stroke-width="1.3" fill="#1b4332"/>
+    <path d="M98 48 Q112 48 112 76 Q112 104 98 104" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <line x1="76" y1="62" x2="86" y2="62" stroke="white" stroke-width="1" opacity="0.4"/>
+    <line x1="76" y1="76" x2="86" y2="76" stroke="white" stroke-width="1" opacity="0.4"/>
+    <line x1="76" y1="90" x2="86" y2="90" stroke="white" stroke-width="1" opacity="0.4"/>
+    <ellipse cx="42" cy="62" rx="6" ry="20" fill="white" opacity="0.08"/>
+  </svg>`,
+  steel: `<svg viewBox="0 0 120 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="28" y="18" width="64" height="10" rx="5" stroke="#1a1a1a" stroke-width="1.5" fill="#888"/>
+    <rect x="34" y="10" width="52" height="9" rx="4.5" stroke="#1a1a1a" stroke-width="1.3" fill="#aaa"/>
+    <rect x="22" y="28" width="76" height="96" rx="14" stroke="#1a1a1a" stroke-width="1.5" fill="#c0c0c0"/>
+    <rect x="22" y="28" width="76" height="96" rx="14" fill="#e8e8e8" opacity="0.5"/>
+    <rect x="27" y="33" width="66" height="86" rx="10" stroke="#1a1a1a" stroke-width="0.7" fill="none"/>
+    <rect x="24" y="123" width="72" height="7" rx="3.5" stroke="#1a1a1a" stroke-width="1.3" fill="#999"/>
+    <path d="M98 46 Q114 46 114 76 Q114 106 98 106" stroke="#1a1a1a" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <path d="M98 46 Q112 46 112 76 Q112 106 98 106" stroke="white" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.5"/>
+    <ellipse cx="40" cy="58" rx="5" ry="18" fill="white" opacity="0.25"/>
+    <ellipse cx="88" cy="70" rx="2" ry="12" fill="white" opacity="0.15"/>
+    <path d="M56 75 Q58 70 60 75 Q60 80 58 80 Q56 80 56 75Z" stroke="#1a1a1a" stroke-width="0.8" fill="#b8d4f0" opacity="0.5"/>
+    <line x1="55" y1="73" x2="61" y2="81" stroke="#1a1a1a" stroke-width="1.2" opacity="0.6"/>
+  </svg>`,
+  wide: `<svg viewBox="0 0 120 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="22" y="18" width="76" height="12" rx="6" stroke="#1a1a1a" stroke-width="1.5" fill="#b85e00"/>
+    <rect x="18" y="9" width="84" height="10" rx="5" stroke="#1a1a1a" stroke-width="1.3" fill="#b85e00"/>
+    <rect x="26" y="30" width="68" height="94" rx="12" stroke="#1a1a1a" stroke-width="1.5" fill="#e07b00"/>
+    <rect x="26" y="30" width="68" height="94" rx="12" fill="#f4a340" opacity="0.35"/>
+    <rect x="31" y="35" width="58" height="84" rx="8" stroke="#1a1a1a" stroke-width="0.7" fill="none"/>
+    <rect x="27" y="123" width="66" height="7" rx="3.5" stroke="#1a1a1a" stroke-width="1.3" fill="#b85e00"/>
+    <ellipse cx="44" cy="62" rx="6" ry="20" fill="white" opacity="0.1"/>
+    <path d="M18 11 L10 4" stroke="#1a1a1a" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.5"/>
+    <path d="M102 11 L110 4" stroke="#1a1a1a" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.5"/>
+    <circle cx="60" cy="72" r="12" fill="#f4d03f" opacity="0.5" stroke="#1a1a1a" stroke-width="0.6"/>
+    <line x1="60" y1="60" x2="60" y2="84" stroke="#1a1a1a" stroke-width="0.6" opacity="0.4"/>
+    <line x1="48" y1="72" x2="72" y2="72" stroke="#1a1a1a" stroke-width="0.6" opacity="0.4"/>
+  </svg>`,
+  glass: `<svg viewBox="0 0 120 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="36" y="18" width="48" height="10" rx="5" stroke="#1a1a1a" stroke-width="1.5" fill="#52b788"/>
+    <rect x="40" y="10" width="40" height="9" rx="4.5" stroke="#1a1a1a" stroke-width="1.3" fill="#40916c"/>
+    <rect x="30" y="28" width="60" height="96" rx="10" stroke="#1a1a1a" stroke-width="1.5" fill="#b8d4f0" opacity="0.55"/>
+    <rect x="34" y="32" width="52" height="88" rx="7" stroke="#1a1a1a" stroke-width="0.6" fill="none" stroke-dasharray="3,3"/>
+    <rect x="31" y="123" width="58" height="7" rx="3.5" stroke="#1a1a1a" stroke-width="1.3" fill="#90b8e0"/>
+    <rect x="31" y="82" width="58" height="41" rx="0" fill="#f4c842" opacity="0.25"/>
+    <line x1="31" y1="82" x2="89" y2="82" stroke="#1a1a1a" stroke-width="0.8" opacity="0.25"/>
+    <rect x="36" y="33" width="7" height="70" rx="3.5" fill="white" opacity="0.3"/>
+    <rect x="72" y="5" width="5" height="50" rx="2.5" stroke="#1a1a1a" stroke-width="1" fill="#ff8fab"/>
+    <circle cx="50" cy="78" r="2.5" stroke="#1a1a1a" stroke-width="0.6" fill="white" opacity="0.5"/>
+    <circle cx="58" cy="75" r="1.5" stroke="#1a1a1a" stroke-width="0.6" fill="white" opacity="0.4"/>
+    <circle cx="66" cy="79" r="2" stroke="#1a1a1a" stroke-width="0.6" fill="white" opacity="0.4"/>
+  </svg>`,
+  sports: `<svg viewBox="0 0 120 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="44" y="10" width="32" height="9" rx="4.5" stroke="#1a1a1a" stroke-width="1.3" fill="#c1121f"/>
+    <path d="M38 19 Q60 12 82 19 L86 28 Q60 21 34 28 Z" stroke="#1a1a1a" stroke-width="1.3" fill="#c1121f"/>
+    <circle cx="60" cy="14" r="5" stroke="#1a1a1a" stroke-width="1.2" fill="#ff6b6b"/>
+    <rect x="30" y="28" width="60" height="96" rx="16" stroke="#1a1a1a" stroke-width="1.5" fill="#e63946"/>
+    <rect x="30" y="28" width="60" height="96" rx="16" fill="#ff6b6b" opacity="0.3"/>
+    <rect x="35" y="33" width="50" height="86" rx="12" stroke="#1a1a1a" stroke-width="0.7" fill="none"/>
+    <rect x="32" y="123" width="56" height="7" rx="3.5" stroke="#1a1a1a" stroke-width="1.3" fill="#c1121f"/>
+    <path d="M46 10 Q38 3 60 2 Q82 3 74 10" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <line x1="36" y1="90" x2="84" y2="90" stroke="white" stroke-width="0.8" opacity="0.3"/>
+    <line x1="36" y1="100" x2="84" y2="100" stroke="white" stroke-width="0.8" opacity="0.2"/>
+    <ellipse cx="46" cy="60" rx="4" ry="18" fill="white" opacity="0.1"/>
+  </svg>`
+};
+
+const titleSVGContent = `
+  <!-- 6개 텀블러 나란히 -->
+  <!-- 1. 슬림 네이비 -->
+  <g transform="translate(8,8)">
+    <rect x="14" y="8" width="22" height="6" rx="3" stroke="#1a1a1a" stroke-width="1.2" fill="#2c4a80"/>
+    <rect x="11" y="4" width="28" height="5" rx="2.5" stroke="#1a1a1a" stroke-width="1.2" fill="#1a3060"/>
+    <rect x="10" y="14" width="30" height="60" rx="6" stroke="#1a1a1a" stroke-width="1.2" fill="#3d5a99"/>
+    <rect x="10" y="14" width="30" height="60" rx="6" fill="#6b8cce" opacity="0.3"/>
+    <rect x="13" y="17" width="24" height="54" rx="4" stroke="#1a1a1a" stroke-width="0.6" fill="none"/>
+    <rect x="11" y="73" width="28" height="5" rx="2.5" stroke="#1a1a1a" stroke-width="1.2" fill="#2c4a80"/>
+    <path d="M40 22 Q52 38 50 58 Q49 65 41 67" stroke="#c8a060" stroke-width="1.2" stroke-linecap="round" fill="none" stroke-dasharray="2,2"/>
+  </g>
+  <!-- 2. 대용량 그린 -->
+  <g transform="translate(56,8)">
+    <rect x="8" y="8" width="34" height="7" rx="3.5" stroke="#1a1a1a" stroke-width="1.2" fill="#1b4332"/>
+    <rect x="12" y="3" width="26" height="6" rx="3" stroke="#1a1a1a" stroke-width="1.2" fill="#1b4332"/>
+    <rect x="5" y="15" width="40" height="60" rx="8" stroke="#1a1a1a" stroke-width="1.2" fill="#2d6a4f"/>
+    <rect x="5" y="15" width="40" height="60" rx="8" fill="#52b788" opacity="0.3"/>
+    <rect x="9" y="19" width="32" height="52" rx="5" stroke="#1a1a1a" stroke-width="0.6" fill="none"/>
+    <rect x="7" y="74" width="36" height="5" rx="2.5" stroke="#1a1a1a" stroke-width="1.2" fill="#1b4332"/>
+    <path d="M45 30 Q54 30 54 50 Q54 70 45 70" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+    <line x1="32" y1="42" x2="38" y2="42" stroke="white" stroke-width="0.7" opacity="0.5"/>
+    <line x1="32" y1="50" x2="38" y2="50" stroke="white" stroke-width="0.7" opacity="0.5"/>
+    <line x1="32" y1="58" x2="38" y2="58" stroke="white" stroke-width="0.7" opacity="0.5"/>
+  </g>
+  <!-- 3. 스텐 실버 -->
+  <g transform="translate(110,8)">
+    <rect x="10" y="8" width="30" height="6" rx="3" stroke="#1a1a1a" stroke-width="1.2" fill="#888"/>
+    <rect x="13" y="3" width="24" height="6" rx="3" stroke="#1a1a1a" stroke-width="1.2" fill="#aaa"/>
+    <rect x="8" y="14" width="34" height="60" rx="7" stroke="#1a1a1a" stroke-width="1.2" fill="#c0c0c0"/>
+    <rect x="8" y="14" width="34" height="60" rx="7" fill="#e8e8e8" opacity="0.4"/>
+    <rect x="12" y="18" width="26" height="52" rx="4" stroke="#1a1a1a" stroke-width="0.6" fill="none"/>
+    <rect x="9" y="73" width="32" height="5" rx="2.5" stroke="#1a1a1a" stroke-width="1.2" fill="#999"/>
+    <path d="M42 28 Q52 28 52 48 Q52 68 42 68" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <ellipse cx="18" cy="38" rx="3" ry="10" fill="white" opacity="0.25"/>
+  </g>
+  <!-- 4. 넓은입구 오렌지 -->
+  <g transform="translate(164,8)">
+    <rect x="6" y="8" width="38" height="7" rx="3.5" stroke="#1a1a1a" stroke-width="1.2" fill="#b85e00"/>
+    <rect x="4" y="3" width="42" height="6" rx="3" stroke="#1a1a1a" stroke-width="1.2" fill="#b85e00"/>
+    <rect x="8" y="15" width="34" height="60" rx="7" stroke="#1a1a1a" stroke-width="1.2" fill="#e07b00"/>
+    <rect x="8" y="15" width="34" height="60" rx="7" fill="#f4a340" opacity="0.3"/>
+    <rect x="12" y="19" width="26" height="52" rx="4" stroke="#1a1a1a" stroke-width="0.6" fill="none"/>
+    <rect x="9" y="74" width="32" height="5" rx="2.5" stroke="#1a1a1a" stroke-width="1.2" fill="#b85e00"/>
+  </g>
+  <!-- 5. 유리 하늘 -->
+  <g transform="translate(212,8)">
+    <rect x="10" y="8" width="28" height="6" rx="3" stroke="#1a1a1a" stroke-width="1.2" fill="#52b788"/>
+    <rect x="13" y="3" width="22" height="6" rx="3" stroke="#1a1a1a" stroke-width="1.2" fill="#40916c"/>
+    <rect x="8" y="14" width="32" height="60" rx="6" stroke="#1a1a1a" stroke-width="1.2" fill="#b8d4f0" opacity="0.6"/>
+    <rect x="8" y="14" width="32" height="60" rx="6" stroke="#1a1a1a" stroke-width="1.2" fill="none"/>
+    <rect x="10" y="42" width="28" height="32" rx="0" fill="#f4c842" opacity="0.2"/>
+    <rect x="11" y="17" width="26" height="54" rx="4" stroke="#1a1a1a" stroke-width="0.5" fill="none" stroke-dasharray="2,3"/>
+    <rect x="9" y="73" width="30" height="5" rx="2.5" stroke="#1a1a1a" stroke-width="1.2" fill="#90b8e0"/>
+    <rect x="30" y="0" width="3" height="40" rx="1.5" stroke="#1a1a1a" stroke-width="0.8" fill="#ff8fab"/>
+  </g>
+  <!-- 6. 스포츠 레드 -->
+  <g transform="translate(256,8)">
+    <rect x="12" y="6" width="18" height="6" rx="3" stroke="#1a1a1a" stroke-width="1.2" fill="#c1121f"/>
+    <path d="M10 12 Q21 7 32 12 L34 18 Q21 14 8 18 Z" stroke="#1a1a1a" stroke-width="1.2" fill="#c1121f"/>
+    <circle cx="21" cy="9" r="4" stroke="#1a1a1a" stroke-width="1" fill="#ff6b6b"/>
+    <rect x="7" y="18" width="28" height="58" rx="10" stroke="#1a1a1a" stroke-width="1.2" fill="#e63946"/>
+    <rect x="7" y="18" width="28" height="58" rx="10" fill="#ff6b6b" opacity="0.25"/>
+    <rect x="11" y="22" width="20" height="50" rx="6" stroke="#1a1a1a" stroke-width="0.6" fill="none"/>
+    <rect x="8" y="75" width="26" height="5" rx="2.5" stroke="#1a1a1a" stroke-width="1.2" fill="#c1121f"/>
+    <path d="M14 6 Q21 1 28 6" stroke="#1a1a1a" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+  </g>
+  <line x1="8" y1="148" x2="292" y2="148" stroke="#1a1a1a" stroke-width="0.5" opacity="0.15"/>
+`;
+
+const questions = [
+  { svgKey:'transit', q:"대중교통을 자주\n이용하는 편인가요?", opts:[{text:"네, 이동이 많아요",val:"transit_yes"},{text:"아니요, 주로 한 곳에 있어요",val:"transit_no"}] },
+  { svgKey:'cafe',    q:"카페 음료를 자주\n마시나요?",          opts:[{text:"네, 자주 마셔요 (주 3회+)",val:"cafe_yes"},{text:"아니요, 주로 물만 마셔요",val:"cafe_no"}] },
+  { svgKey:'dorm',    q:"정수기까지의 거리가\n멀리 느껴지나요?", opts:[{text:"네, 정수기 가기가 번거로워요",val:"dorm_yes"},{text:"아니요, 물 접근이 쉬워요",val:"dorm_no"}] },
+  { svgKey:'desk',    q:"책상이나 강의실에서\n주로 사용하나요?",  opts:[{text:"네, 주로 앉아서 사용해요",val:"desk_yes"},{text:"아니요, 들고 다니며 마셔요",val:"desk_no"}] },
+  { svgKey:'strong',  q:"에이드·라떼 등\n향이 강한 음료를 자주 마시나요?", opts:[{text:"네, 다양하게 마셔요",val:"strong_yes"},{text:"아니요, 물·아메리카노 위주예요",val:"strong_no"}] },
+  { svgKey:'wash',    q:"텀블러 세척이\n번거롭게 느껴지나요?",  opts:[{text:"네, 세척이 귀찮아요",val:"wash_lazy"},{text:"아니요, 꼼꼼히 씻는 편이에요",val:"wash_clean"}] }
+];
+
+const profiles = [
+  { cond:a=>a.transit_yes&&a.cafe_yes, svg:'slim',   badge:"액티브 카페인 스타일", title:"슬림 보온 텀블러\n+ 스트랩", desc:"이동도 많고 카페도 자주 간다면, 가방에 쏙 들어가는 슬림형에 밀폐가 확실한 텀블러가 딱이에요.", feats:["슬림형 350~500ml","완벽 밀폐 뚜껑","보온·보냉 기능","스트랩·손잡이 있는 것 추천"] },
+  { cond:a=>a.dorm_yes&&!a.cafe_yes,   svg:'large',  badge:"기숙사 하이드레이션 스타일", title:"대용량 텀블러\n600ml 이상", desc:"정수기가 멀다면 한 번에 많이 담아두는 게 최고입니다. 대용량으로 자주 오가는 번거로움을 줄여요.", feats:["대용량 600ml~1L","세척 편리한 넓은 입구","보냉 유지","플라스틱 생수 절감"] },
+  { cond:a=>a.desk_yes&&!a.transit_yes,svg:'steel',  badge:"데스크 집중 스타일", title:"결로 없는\n스텐 보온 텀블러", desc:"책상이나 강의실에서 주로 쓴다면 표면에 물기가 맺히지 않는 스텐 보온 텀블러가 노트북과 교재를 지켜줍니다.", feats:["결로 없는 스텐 소재","보온·보냉","책상 사용 최적화","안전한 밀폐 구조"] },
+  { cond:a=>a.strong_yes&&a.wash_lazy, svg:'wide',   badge:"향음료 즐기는 스타일", title:"넓은 입구\n단순형 텀블러", desc:"라떼·에이드 등 향이 강한 음료를 마신다면 세척이 쉬운 넓은 입구 텀블러로 위생적으로 관리하세요.", feats:["넓은 입구 디자인","세척 초간편","보온·보냉","다양한 음료 OK"] },
+  { cond:a=>a.cafe_yes&&!a.transit_yes&&a.wash_clean, svg:'glass', badge:"카페인 정주행 스타일", title:"유리 텀블러", desc:"한 곳에서 카페 음료를 즐기고 세척도 꼼꼼히 한다면 유리 텀블러로 음료를 예쁘게 즐겨보세요.", feats:["유리 소재 위생적","카페 음료 전용","인스타 감성","친환경 소재"] },
+  { cond:a=>!a.cafe_yes&&!a.dorm_yes&&a.transit_yes, svg:'sports', badge:"액티브 워터 스타일", title:"원터치\n스포츠 물통", desc:"물 위주로 마시고 이동이 많다면 원터치로 바로 마실 수 있는 스포츠 물통이 최고입니다.", feats:["원터치 오픈","500ml 표준 용량","활동에 편한 구조","세척 간편"] },
+  { cond:()=>true, svg:'steel', badge:"미니멀 에코 스타일", title:"스텐 물병", desc:"물을 주로 마시고 꼼꼼히 관리한다면 스텐 물병 하나로 오래오래 사용할 수 있어요.", feats:["500ml 스텐","보냉 유지","세척 편리","반영구적 사용"] }
+];
+
+let answers={}, current=0;
+function pad(n){ return n<10?'0'+n:n; }
+
+function showTitle(){
+  document.getElementById('progressWrap').style.opacity='0';
+  document.getElementById('quizArea').innerHTML=`
+    <div class="title-card">
+      <div class="title-top">
+        <svg class="title-illust" viewBox="0 0 300 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          ${titleSVGContent}
+        </svg>
+        <div class="title-eyebrow">Tumbler Guide</div>
+        <div class="title-h1">나에게 맞는<br>텀블러는?</div>
+        <div class="title-sub">6가지 질문으로 찾아보는<br>내 생활습관 맞춤 텀블러</div>
+      </div>
+      <div class="title-body">
+        <button class="start-btn" onclick="startQuiz()">시작하기 →</button>
+      </div>
+    </div>`;
+}
+
+function startQuiz(){
+  document.getElementById('progressWrap').style.opacity='1';
+  renderQ(0);
+}
+
+function renderQ(idx){
+  const q=questions[idx];
+  const pct=Math.round((idx/questions.length)*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressNum').textContent=`${pad(idx+1)} / ${pad(questions.length)}`;
+  document.getElementById('quizArea').innerHTML=`
+    <div class="card">
+      <div class="q-illust-wrap">
+        <div class="q-num">${pad(idx+1)}</div>
+        <svg class="q-svg" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          ${qSVGs[q.svgKey].replace(/<svg[^>]*>|<\/svg>/g,'')}
+        </svg>
+        <div class="q-text">${q.q.replace(/\n/g,'<br>')}</div>
+      </div>
+      <div class="opts-wrap">
+        ${q.opts.map(o=>`<button class="opt-btn" onclick="answer('${o.val}')"><span>${o.text}</span><span class="opt-arrow">→</span></button>`).join('')}
+      </div>
+    </div>`;
+}
+
+function answer(val){
+  answers[val]=true; current++;
+  if(current<questions.length) renderQ(current);
+  else showResult();
+}
+
+function showResult(){
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('progressNum').textContent=`${pad(questions.length)} / ${pad(questions.length)}`;
+  const r=profiles.find(p=>p.cond(answers));
+  document.getElementById('quizArea').innerHTML=`
+    <div class="result-card">
+      <div class="result-top">
+        <svg class="result-svg" viewBox="0 0 120 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+          ${resultSVGs[r.svg].replace(/<svg[^>]*>|<\/svg>/g,'')}
+        </svg>
+        <div class="result-eyebrow">${r.badge}</div>
+        <div class="result-title">${r.title.replace(/\n/g,'<br>')}</div>
+        <div class="result-desc">${r.desc}</div>
+      </div>
+      <div class="result-body">
+        ${r.feats.map(f=>`<div class="feat-item"><span class="feat-dot"></span><span>${f}</span></div>`).join('')}
+        <button class="restart-btn" onclick="restart()">다시 해보기 ↺</button>
+      </div>
+    </div>`;
+}
+
+function restart(){ answers={}; current=0; showTitle(); }
+showTitle();
+</script>
+</body>
+</html>
